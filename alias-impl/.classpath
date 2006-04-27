@@ -16,5 +16,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/site-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/memory-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/db-api"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/mailarchive-api"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
