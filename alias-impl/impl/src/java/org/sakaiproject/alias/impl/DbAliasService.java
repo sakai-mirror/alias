@@ -4,21 +4,20 @@
  ***********************************************************************************
  *
  * Copyright (c) 2003, 2004, 2005, 2006 The Sakai Foundation.
- * 
- * Licensed under the Educational Community License, Version 1.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Educational Community License, Version 1.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.opensource.org/licenses/ecl1.php
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
  * limitations under the License.
  *
  **********************************************************************************/
-
 package org.sakaiproject.alias.impl;
 
 import java.sql.Connection;
@@ -28,6 +27,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
@@ -35,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.alias.api.Alias;
 import org.sakaiproject.alias.api.AliasEdit;
+import org.sakaiproject.alias.api.AliasServiceSql;
 import org.sakaiproject.db.api.SqlReader;
 import org.sakaiproject.db.api.SqlService;
 import org.sakaiproject.entity.api.ResourceProperties;
@@ -79,7 +80,7 @@ public abstract class DbAliasService extends BaseAliasService
 
 	/**
 	 * Configuration: run the from-old conversion.
-	 * 
+	 *
 	 * @param value
 	 *        The conversion desired value.
 	 */
@@ -103,7 +104,7 @@ public abstract class DbAliasService extends BaseAliasService
 
 	/**
 	 * Configuration: set the external locks value.
-	 * 
+	 *
 	 * @param value
 	 *        The external locks value.
 	 */
@@ -117,7 +118,7 @@ public abstract class DbAliasService extends BaseAliasService
 
 	/**
 	 * Configuration: set the locks-in-db
-	 * 
+	 *
 	 * @param value
 	 *        The locks-in-db value.
 	 */
@@ -131,7 +132,7 @@ public abstract class DbAliasService extends BaseAliasService
 
 	/**
 	 * Configuration: to run the ddl on init or not.
-	 * 
+	 *
 	 * @param value
 	 *        the auto ddl value.
 	 */
@@ -139,6 +140,24 @@ public abstract class DbAliasService extends BaseAliasService
 	{
 		m_autoDdl = new Boolean(value).booleanValue();
 	}
+
+   protected Map<String, AliasServiceSql> databaseBeans;        // contains a map of the database dependent beans injected by spring
+   protected AliasServiceSql              aliasServiceSql;      // contains database dependent code
+
+   public void setDatabaseBeans(Map databaseBeans) {
+     this.databaseBeans = databaseBeans;
+   }
+
+   public AliasServiceSql getAliasServiceSql() {
+      return aliasServiceSql;
+   }
+
+   /**
+    * sets which bean containing database dependent code should be used depending on the database vendor.
+    */
+   public void setAliasServiceSql(String vendor) {
+      this.aliasServiceSql = (databaseBeans.containsKey(vendor) ? databaseBeans.get(vendor) : databaseBeans.get("default"));
+   }
 
 	/**********************************************************************************************************************************************************************************************************************************************************
 	 * Init and Destroy
@@ -158,6 +177,7 @@ public abstract class DbAliasService extends BaseAliasService
 			}
 
 			super.init();
+         setAliasServiceSql(sqlService().getVendor());
 
 			M_log.info("init(): table: " + m_tableName + " external locks: " + m_useExternalLocks + " checkOld: " + m_checkOld);
 
@@ -186,7 +206,7 @@ public abstract class DbAliasService extends BaseAliasService
 
 	/**
 	 * Construct a Storage object.
-	 * 
+	 *
 	 * @return The new storage object.
 	 */
 	protected Storage newStorage()
@@ -209,7 +229,7 @@ public abstract class DbAliasService extends BaseAliasService
 
 		/**
 		 * Construct.
-		 * 
+		 *
 		 * @param user
 		 *        The StorageUser class to call back for creation of Resource and Edit objects.
 		 */
@@ -505,7 +525,7 @@ public abstract class DbAliasService extends BaseAliasService
 
 		/**
 		 * Read properties from storage into the edit's properties.
-		 * 
+		 *
 		 * @param edit
 		 *        The user to read properties for.
 		 */
@@ -516,7 +536,7 @@ public abstract class DbAliasService extends BaseAliasService
 
 		/**
 		 * Get the fields for the database from the edit for this id, and the id again at the end if needed
-		 * 
+		 *
 		 * @param id
 		 *        The resource id
 		 * @param edit
@@ -562,7 +582,7 @@ public abstract class DbAliasService extends BaseAliasService
 
 		/**
 		 * Read from the result one set of fields to create a Resource.
-		 * 
+		 *
 		 * @param result
 		 *        The Sql query result.
 		 * @return The Resource object.
@@ -596,7 +616,7 @@ public abstract class DbAliasService extends BaseAliasService
 	{
 		/**
 		 * Construct.
-		 * 
+		 *
 		 * @param user
 		 *        The StorageUser class to call back for creation of Resource and Edit objects.
 		 */
@@ -708,7 +728,7 @@ public abstract class DbAliasService extends BaseAliasService
 
 		/**
 		 * Search for aliases with id or target matching criteria, in range.
-		 * 
+		 *
 		 * @param criteria
 		 *        The search criteria.
 		 * @param first
@@ -744,7 +764,7 @@ public abstract class DbAliasService extends BaseAliasService
 
 		/**
 		 * Count all the aliases with id or target matching criteria.
-		 * 
+		 *
 		 * @param criteria
 		 *        The search criteria.
 		 * @return The count of all aliases with id or target matching criteria.
@@ -768,7 +788,7 @@ public abstract class DbAliasService extends BaseAliasService
 
 		/**
 		 * Read properties from storage into the edit's properties.
-		 * 
+		 *
 		 * @param edit
 		 *        The user to read properties for.
 		 */
@@ -793,7 +813,7 @@ public abstract class DbAliasService extends BaseAliasService
 			connection.setAutoCommit(false);
 
 			// read all alias ids
-			String sql = "select ALIAS_ID, XML from CHEF_ALIAS";
+         String sql = aliasServiceSql.getListAliasesSql();
 			sqlService().dbRead(connection, sql, null, new SqlReader()
 			{
 				private int count = 0;
@@ -829,7 +849,7 @@ public abstract class DbAliasService extends BaseAliasService
 						}
 
 						// delete the old record
-						String statement = "delete from CHEF_ALIAS where ALIAS_ID = ?";
+                  String statement = aliasServiceSql.getDeleteAliasSql();
 						fields = new Object[1];
 						fields[0] = id;
 						ok = sqlService().dbWrite(connection, statement, fields);

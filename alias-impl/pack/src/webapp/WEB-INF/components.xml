@@ -3,27 +3,45 @@
 
 <beans>
 
+    <!-- database beans -->
+    <bean id="org.sakaiproject.alias.impl.AliasServiceSqlDb2"       class="org.sakaiproject.alias.impl.AliasServiceSqlDb2"     singleton="true"/>
+    <bean id="org.sakaiproject.alias.impl.AliasServiceSqlDefault"   class="org.sakaiproject.alias.impl.AliasServiceSqlDefault" singleton="true"/>
+    <bean id="org.sakaiproject.alias.impl.AliasServiceSqlHSql"      class="org.sakaiproject.alias.impl.AliasServiceSqlHSql"    singleton="true"/>
+    <bean id="org.sakaiproject.alias.impl.AliasServiceSqlMsSql"     class="org.sakaiproject.alias.impl.AliasServiceSqlMsSql"   singleton="true"/>
+    <bean id="org.sakaiproject.alias.impl.AliasServiceSqlMySql"     class="org.sakaiproject.alias.impl.AliasServiceSqlMySql"   singleton="true"/>
+    <bean id="org.sakaiproject.alias.impl.AliasServiceSqlOracle"    class="org.sakaiproject.alias.impl.AliasServiceSqlOracle"  singleton="true"/>
+
 	<bean id="org.sakaiproject.alias.api.AliasService"
 			class="org.sakaiproject.alias.impl.DbAliasService"
 			init-method="init"
 			destroy-method="destroy"
 			singleton="true">
 
-		<lookup-method name="memoryService" bean="org.sakaiproject.memory.api.MemoryService" />
-		<lookup-method name="serverConfigurationService" bean="org.sakaiproject.component.api.ServerConfigurationService" />
-		<lookup-method name="entityManager" bean="org.sakaiproject.entity.api.EntityManager" />
-		<lookup-method name="securityService" bean="org.sakaiproject.authz.api.SecurityService" />
-		<lookup-method name="sessionManager" bean="org.sakaiproject.tool.api.SessionManager" />
-		<lookup-method name="timeService" bean="org.sakaiproject.time.api.TimeService" />
-		<lookup-method name="functionManager" bean="org.sakaiproject.authz.api.FunctionManager" />
-		<lookup-method name="eventTrackingService" bean="org.sakaiproject.event.api.EventTrackingService" />
-		<lookup-method name="userDirectoryService" bean="org.sakaiproject.user.api.UserDirectoryService" />
-		<lookup-method name="sqlService" bean="org.sakaiproject.db.api.SqlService" />
-		<lookup-method name="siteService" bean="org.sakaiproject.site.api.SiteService" />
+        <lookup-method name="entityManager"              bean="org.sakaiproject.entity.api.EntityManager"/>
+        <lookup-method name="eventTrackingService"       bean="org.sakaiproject.event.api.EventTrackingService"/>
+        <lookup-method name="functionManager"            bean="org.sakaiproject.authz.api.FunctionManager"/>
+        <lookup-method name="memoryService"              bean="org.sakaiproject.memory.api.MemoryService"/>
+        <lookup-method name="securityService"            bean="org.sakaiproject.authz.api.SecurityService"/>
+        <lookup-method name="serverConfigurationService" bean="org.sakaiproject.component.api.ServerConfigurationService"/>
+        <lookup-method name="sessionManager"             bean="org.sakaiproject.tool.api.SessionManager"/>
+        <lookup-method name="siteService"                bean="org.sakaiproject.site.api.SiteService"/>
+        <lookup-method name="sqlService"                 bean="org.sakaiproject.db.api.SqlService"/>
+        <lookup-method name="timeService"                bean="org.sakaiproject.time.api.TimeService"/>
+        <lookup-method name="userDirectoryService"       bean="org.sakaiproject.user.api.UserDirectoryService"/>
 
 		<property name="autoDdl"><value>${auto.ddl}</value></property>
 		<property name="cacheMinutes"><value>5</value></property>
 		<property name="cacheCleanerMinutes"><value>15</value></property>
+        <property name="databaseBeans">
+           <map>
+              <entry key="db2"    ><ref bean="org.sakaiproject.alias.impl.AliasServiceSqlDb2"    /></entry>
+              <entry key="default"><ref bean="org.sakaiproject.alias.impl.AliasServiceSqlDefault"/></entry>
+              <entry key="hsqldb" ><ref bean="org.sakaiproject.alias.impl.AliasServiceSqlHSql"   /></entry>
+              <entry key="mssql"  ><ref bean="org.sakaiproject.alias.impl.AliasServiceSqlMsSql"  /></entry>
+              <entry key="mysql"  ><ref bean="org.sakaiproject.alias.impl.AliasServiceSqlMySql"  /></entry>
+              <entry key="oracle" ><ref bean="org.sakaiproject.alias.impl.AliasServiceSqlOracle" /></entry>
+           </map>
+        </property>
 	</bean>
 
 </beans>
