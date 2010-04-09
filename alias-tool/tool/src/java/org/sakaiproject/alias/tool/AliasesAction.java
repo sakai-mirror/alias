@@ -447,7 +447,7 @@ public class AliasesAction extends PagedResourceActionII
 		// read the form
 		String id = StringUtil.trimToNull(data.getParameters().getString("id"));
 		String target = StringUtil.trimToNull(data.getParameters().getString("target"));
-
+		
 		// get the alias
 		AliasEdit alias = (AliasEdit) state.getAttribute("alias");
 
