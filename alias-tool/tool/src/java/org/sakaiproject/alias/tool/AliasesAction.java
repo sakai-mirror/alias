@@ -47,7 +47,7 @@ import org.sakaiproject.exception.IdUsedException;
 import org.sakaiproject.exception.InUseException;
 import org.sakaiproject.exception.PermissionException;
 import org.sakaiproject.util.ResourceLoader;
-import org.sakaiproject.util.StringUtil;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * <p>
@@ -56,7 +56,9 @@ import org.sakaiproject.util.StringUtil;
  */
 public class AliasesAction extends PagedResourceActionII
 {
-	/**
+    private static final long serialVersionUID = -5477742481219305334L;
+
+    /**
 	 * maximum chars allowed for alias setup 
 	 */
 	private static final int MAX_ALIAS_ID_LENGTH = 99;
@@ -79,6 +81,7 @@ public class AliasesAction extends PagedResourceActionII
 	 * 
 	 * @param peid
 	 *        The portlet id.
+	 * @deprecated this is unused
 	 */
 	private void updateObservationOfChannel(SessionState state, String peid)
 	{
@@ -465,8 +468,8 @@ public class AliasesAction extends PagedResourceActionII
 	private boolean readAliasForm(RunData data, SessionState state)
 	{
 		// read the form
-		String id = StringUtil.trimToNull(data.getParameters().getString("id"));
-		String target = StringUtil.trimToNull(data.getParameters().getString("target"));
+		String id = StringUtils.trimToNull(data.getParameters().getString("id"));
+		String target = StringUtils.trimToNull(data.getParameters().getString("target"));
 		
 		// get the alias
 		AliasEdit alias = (AliasEdit) state.getAttribute("alias");
@@ -515,7 +518,7 @@ public class AliasesAction extends PagedResourceActionII
 	protected List readResourcesPage(SessionState state, int first, int last)
 	{
 		// search?
-		String search = StringUtil.trimToNull((String) state.getAttribute(STATE_SEARCH));
+		String search = StringUtils.trimToNull((String) state.getAttribute(STATE_SEARCH));
 
 		if (search != null)
 		{
@@ -531,7 +534,7 @@ public class AliasesAction extends PagedResourceActionII
 	protected int sizeResources(SessionState state)
 	{
 		// search?
-		String search = StringUtil.trimToNull((String) state.getAttribute(STATE_SEARCH));
+		String search = StringUtils.trimToNull((String) state.getAttribute(STATE_SEARCH));
 
 		if (search != null)
 		{
